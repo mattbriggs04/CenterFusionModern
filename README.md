@@ -1,4 +1,4 @@
-# TinyCenterFusion
+# CenterFusionModern
 This project is a modern, Python 3.12.11 + PyTorch 3.12 reproduction of [https://github.com/mrnabati/CenterFusion](CenterFusion) which implements [https://arxiv.org/abs/2011.04841](CenterFusion: Center-based Radar and Camera Fusion for 3D Object Detection).
 
 
