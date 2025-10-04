@@ -3,7 +3,22 @@ This project is a modern, Python 3.12.11 + PyTorch 3.12 reproduction of [https:/
 
 
 ## Installation Instructions
-I used pyenv and a python virtual environment to create this project with 
+To use python 3.12.11 with pyenv, run in the root directory
+```
+pyenv install 3.12.11
+pyenv local 3.12.11
+python3 --version # check the python version
 ```
 
+Create a virtual environment
+```
+python3 -m venv .venv
+```
+Activate the virtual environment (MacOS / Linux)
+```
+source .venv/bin/activate
+```
+On Windows:
+```
+.\.venv\Scripts\activate
 ```
