@@ -580,11 +580,18 @@ class Interpolate(nn.Module):
         x = F.interpolate(x, scale_factor=self.scale, mode=self.mode, align_corners=False)
         return x
 
-DLA_NODE = {
-    'dcn': (DeformConv, DeformConv),
-    'gcn': (Conv, GlobalConv),
-    'conv': (Conv, Conv),
-}
+# protect against DCN library not being cloned -- some architectures do not support it
+if DCN is None:
+    DLA_NODE = {
+        'dcn': (DeformConv, DeformConv),
+        'gcn': (Conv, GlobalConv),
+        'conv': (Conv, Conv),
+    }
+else:
+    DLA_NODE = {
+        'gcn': (Conv, GlobalConv),
+        'conv': (Conv, Conv),
+    }
 
 class DLASeg(BaseModel):
     def __init__(self, num_layers, heads, head_convs, opt):
