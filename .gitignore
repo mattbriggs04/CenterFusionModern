@@ -1,0 +1,9 @@
+# ignore environment
+.venv/
+.python-version
+
+# add nuScenes dataset to data
+data/*
+
+# add pre-trained models to models
+models/*
