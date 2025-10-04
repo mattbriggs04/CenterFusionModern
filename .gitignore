@@ -1,9 +1,13 @@
-# ignore environment
+# ignore environment-related files and directories
 .venv/
 .python-version
+__pycache__/
 
 # add nuScenes dataset to data
 data/*
 
 # add pre-trained models to models
 models/*
+
+# macOS
+.DS_Store
