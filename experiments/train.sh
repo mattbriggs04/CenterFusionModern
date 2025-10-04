@@ -6,6 +6,8 @@ cd src
 python main.py \
     ddd \
     --exp_id centerfusion \
+    --arch dla_34 \
+    --dla_node 'conv' \
     --shuffle_train \
     --train_split train \
     --val_split mini_val \
@@ -27,8 +29,7 @@ python main.py \
     --pc_z_offset 0.0 \
     --pillar_dims 1.0,0.2,0.2 \
     --max_pc_dist 60.0 \
-    --load_model ../models/centernet_baseline_e170.pth \
-    # --dla_node 'conv' \
+    # --load_model ../models/centerfusion_e150.pth \
     # --freeze_backbone \
     # --resume \
 
