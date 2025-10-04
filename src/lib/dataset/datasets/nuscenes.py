@@ -12,7 +12,7 @@ import copy
 from tqdm import tqdm
 
 from ..generic_dataset import GenericDataset
-from utils.ddd_utils import compute_box_3d, project_to_image, iou3d_global
+from lib.utils.ddd_utils import compute_box_3d, project_to_image, iou3d_global
 from nuscenes.utils.geometry_utils import view_points
 from nuscenes.utils.data_classes import Box
 from itertools import compress

@@ -10,16 +10,16 @@ import pycocotools.coco as coco
 import torch
 import torch.utils.data as data
 
-from utils.image import flip, color_aug
-from utils.image import get_affine_transform, affine_transform
-from utils.image import gaussian_radius, draw_umich_gaussian, gaussian2D
-from utils.pointcloud import map_pointcloud_to_image, pc_dep_to_hm
+from lib.utils.image import flip, color_aug
+from lib.utils.image import get_affine_transform, affine_transform
+from lib.utils.image import gaussian_radius, draw_umich_gaussian, gaussian2D
+from lib.utils.pointcloud import map_pointcloud_to_image, pc_dep_to_hm
 import copy
 from nuscenes.utils.data_classes import Box
 from pyquaternion import Quaternion
 from nuscenes.utils.geometry_utils import view_points
-from utils.ddd_utils import compute_box_3d, project_to_image, draw_box_3d
-from utils.ddd_utils import comput_corners_3d, alpha2rot_y, get_pc_hm
+from lib.utils.ddd_utils import compute_box_3d, project_to_image, draw_box_3d
+from lib.utils.ddd_utils import comput_corners_3d, alpha2rot_y, get_pc_hm
 
 
 def get_dist_thresh(calib, ct, dim, alpha):

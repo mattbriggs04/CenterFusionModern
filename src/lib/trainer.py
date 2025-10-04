@@ -4,17 +4,17 @@ import numpy as np
 # from progress.bar import Bar
 # TODO: standardize on tqdm
 
-from model.data_parallel import DataParallel
+from lib.model.data_parallel import DataParallel
 from .utils.utils import AverageMeter
 
-from model.losses import FastFocalLoss, RegWeightedL1Loss
-from model.losses import BinRotLoss, WeightedBCELoss
-from model.decode import fusion_decode
-from model.utils import _sigmoid, flip_tensor, flip_lr_off, flip_lr
-from utils.debugger import Debugger
-from utils.post_process import generic_post_process
-from model.losses import DepthLoss
-from utils.pointcloud import generate_pc_hm
+from lib.model.losses import FastFocalLoss, RegWeightedL1Loss
+from lib.model.losses import BinRotLoss, WeightedBCELoss
+from lib.model.decode import fusion_decode
+from lib.model.utils import _sigmoid, flip_tensor, flip_lr_off, flip_lr
+from lib.utils.debugger import Debugger
+from lib.utils.post_process import generic_post_process
+from lib.model.losses import DepthLoss
+from lib.utils.pointcloud import generate_pc_hm
 
 import cv2
 class GenericLoss(torch.nn.Module):

@@ -11,3 +11,5 @@ models/*
 
 # macOS
 .DS_Store
+
+exp/*

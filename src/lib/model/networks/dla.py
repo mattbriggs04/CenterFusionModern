@@ -14,7 +14,7 @@ from .base_model import BaseModel
 try:
     from .DCNv2.dcn_v2 import DCN
 except:
-    print('import DCN failed')
+    print('DCN import failed: DCN will not be used')
     DCN = None
 
 
@@ -579,7 +579,6 @@ class Interpolate(nn.Module):
     def forward(self, x):
         x = F.interpolate(x, scale_factor=self.scale, mode=self.mode, align_corners=False)
         return x
-
 
 DLA_NODE = {
     'dcn': (DeformConv, DeformConv),

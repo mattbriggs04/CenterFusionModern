@@ -1,6 +1,6 @@
 from ..utils import _topk, _tranpose_and_gather_feat
-from utils.ddd_utils import get_pc_hm
-from utils.pointcloud import generate_pc_hm
+from lib.utils.ddd_utils import get_pc_hm
+from lib.utils.pointcloud import generate_pc_hm
 
 import torch
 from torch import nn
