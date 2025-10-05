@@ -5,9 +5,10 @@ __pycache__/
 
 # add nuScenes dataset to data
 data/*
-
+!data/.gitkeep
 # add pre-trained models to models
 models/*
+!models/.gitkeep
 
 # macOS
 .DS_Store
