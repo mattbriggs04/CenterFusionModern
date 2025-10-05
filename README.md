@@ -22,3 +22,5 @@ On Windows:
 ```
 .\.venv\Scripts\activate
 ```
+## Pretrained Models
+The original CenterFusion pretrained models are rotten (404 errors). Coming soon: my own pretrained models using Google Colab cloud computing.
