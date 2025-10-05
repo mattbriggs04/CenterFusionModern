@@ -74,15 +74,15 @@ class BaseModel(nn.Module):
 
           self.__setattr__(head, fc)
 
-
+    # implemented in children classes
     def img2feats(self, x):
       raise NotImplementedError
     
-
+    # implemented in children classes
     def imgpre2feats(self, x, pre_img=None, pre_hm=None):
       raise NotImplementedError
 
-
+    # this is the main combination of the secondary regression heads using the img + radar features
     def forward(self, x, pc_hm=None, pc_dep=None, calib=None):
       ## extract features from image
       feats = self.img2feats(x)
