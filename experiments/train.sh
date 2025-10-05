@@ -1,8 +1,8 @@
 export CUDA_DEVICE_ORDER=PCI_BUS_ID
-export CUDA_VISIBLE_DEVICES=0,1
+export CUDA_VISIBLE_DEVICES=0
 
 cd src
-# train
+# train for single gpu
 python main.py \
     ddd \
     --exp_id centerfusion \
@@ -15,12 +15,12 @@ python main.py \
     --run_dataset_eval \
     --nuscenes_att \
     --velocity \
-    --batch_size 32 \
+    --batch_size 8 \
     --lr 2.5e-4 \
     --num_epochs 60 \
     --lr_step 50 \
     --save_point 20,40,50 \
-    --gpus 0,1 \
+    --gpus 0 \
     --not_rand_crop \
     --flip 0.5 \
     --shift 0.1 \
