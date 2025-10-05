@@ -6,16 +6,16 @@ import time
 import torch
 import math
 
-from model.model import create_model, load_model
-from model.decode import fusion_decode #, generic_decode
-from model.utils import flip_tensor, flip_lr_off, flip_lr
-from utils.image import get_affine_transform, affine_transform
-from utils.image import draw_umich_gaussian, gaussian_radius
-from utils.post_process import generic_post_process
-from utils.debugger import Debugger
-from utils.tracker import Tracker
-from dataset.dataset_factory import get_dataset
-from utils.pointcloud import generate_pc_hm
+from .model.model import create_model, load_model
+from .model.decode import fusion_decode #, generic_decode
+from .model.utils import flip_tensor, flip_lr_off, flip_lr
+from .utils.image import get_affine_transform, affine_transform
+from .utils.image import draw_umich_gaussian, gaussian_radius
+from .utils.post_process import generic_post_process
+from .utils.debugger import Debugger
+from .utils.tracker import Tracker
+from .dataset.dataset_factory import get_dataset
+from .utils.pointcloud import generate_pc_hm
 
 
 class Detector(object):
