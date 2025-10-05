@@ -7,7 +7,6 @@ To use python 3.12.11 with pyenv, run in the root directory
 ```
 pyenv install 3.12.11
 pyenv local 3.12.11
-python3 --version # check the python version
 ```
 
 Create a virtual environment
@@ -21,6 +20,12 @@ source .venv/bin/activate
 On Windows:
 ```
 .\.venv\Scripts\activate
+```
+
+Install dependencies
+```
+cd CenterFusionModern
+pip install -r requirements.txt
 ```
 ## Pretrained Models
 The original CenterFusion pretrained models are rotten (404 errors). Coming soon: my own pretrained models using Google Colab cloud computing.
