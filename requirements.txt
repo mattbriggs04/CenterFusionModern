@@ -22,6 +22,7 @@ opencv-python<=4.9.0.80
 packaging
 parameterized
 pillow
+progress
 pycocotools
 pyparsing
 pyquaternion
