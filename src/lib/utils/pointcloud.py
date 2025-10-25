@@ -289,8 +289,8 @@ def pc_dep_to_hm_torch(pc_hm, pc_dep, dep, bbox, dist_thresh, opt):
     # Slice the RoI using the plain integer coordinates
     roi = pc_dep[:, y1:y2+1, x1:x2+1]
 
-    ct = torch.tensor(
-      [(bbox[0] + bbox[2]) / 2, (bbox[1] + bbox[3]) / 2], dtype=torch.float32)
+    ct = np.array(
+      [(bbox[0] + bbox[2]) / 2, (bbox[1] + bbox[3]) / 2], dtype=np.float32)
     
     # DEPRECATED: PyTorch does not support non-integer indexing (torch-floats not allowed)
     # bbox_int = torch.tensor([torch.floor(bbox[0]), 
@@ -299,11 +299,10 @@ def pc_dep_to_hm_torch(pc_hm, pc_dep, dep, bbox, dist_thresh, opt):
     #                      torch.ceil(bbox[3])], dtype=torch.int32)# format: xyxy
     #
     # FIX:
-    bbox_int = list([int(torch.floor(bbox[0])),
-                     int(torch.floor(bbox[1])),
-                     int(torch.ceil(bbox[2])),
-                     int(torch.ceil(bbox[3]))]
-                     )
+    bbox_int = np.array([np.floor(bbox[0]), 
+                         np.floor(bbox[1]), 
+                         np.ceil(bbox[2]), 
+                         np.ceil(bbox[3])], np.int32) # format: xyxy
     roi = pc_dep[:, bbox_int[1]:bbox_int[3]+1, bbox_int[0]:bbox_int[2]+1]
 
     pc_dep = roi[opt.pc_feat_channels['pc_dep']]
@@ -361,6 +360,7 @@ def pc_dep_to_hm(pc_hm, pc_dep, dep, bbox, dist_thresh, opt):
       dep = dep[0]
     ct = np.array(
       [(bbox[0] + bbox[2]) / 2, (bbox[1] + bbox[3]) / 2], dtype=np.float32)
+    
     bbox_int = np.array([np.floor(bbox[0]), 
                          np.floor(bbox[1]), 
                          np.ceil(bbox[2]), 
