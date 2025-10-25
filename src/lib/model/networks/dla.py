@@ -14,7 +14,7 @@ from .base_model import BaseModel
 try:
     from .DCNv2.dcn_v2 import DCN
 except:
-    print('DCN import failed: DCN will not be used')
+    print('DCN not currently available. Ensure --dla_node \'conv\' is being used.')
     DCN = None
 
 
@@ -336,100 +336,6 @@ def dla34(pretrained=True, **kwargs):  # DLA-34
     else:
         print('Warning: No ImageNet pretrain!!')
     return model
-
-def dla102(pretrained=None, **kwargs):  # DLA-102
-    Bottleneck.expansion = 2
-    model = DLA([1, 1, 1, 3, 4, 1], [16, 32, 128, 256, 512, 1024],
-                block=Bottleneck, residual_root=True, **kwargs)
-    if pretrained:
-        model.load_pretrained_model(
-            data='imagenet', name='dla102', hash='d94d9790')
-    return model
-
-def dla46_c(pretrained=None, **kwargs):  # DLA-46-C
-    Bottleneck.expansion = 2
-    model = DLA([1, 1, 1, 2, 2, 1],
-                [16, 32, 64, 64, 128, 256],
-                block=Bottleneck, **kwargs)
-    if pretrained is not None:
-        model.load_pretrained_model(
-            data='imagenet', name='dla46_c', hash='2bfd52c3')
-    return model
-
-
-def dla46x_c(pretrained=None, **kwargs):  # DLA-X-46-C
-    BottleneckX.expansion = 2
-    model = DLA([1, 1, 1, 2, 2, 1],
-                [16, 32, 64, 64, 128, 256],
-                block=BottleneckX, **kwargs)
-    if pretrained is not None:
-        model.load_pretrained_model(
-            data='imagenet', name='dla46x_c', hash='d761bae7')
-    return model
-
-
-def dla60x_c(pretrained=None, **kwargs):  # DLA-X-60-C
-    BottleneckX.expansion = 2
-    model = DLA([1, 1, 1, 2, 3, 1],
-                [16, 32, 64, 64, 128, 256],
-                block=BottleneckX, **kwargs)
-    if pretrained is not None:
-        model.load_pretrained_model(
-            data='imagenet', name='dla60x_c', hash='b870c45c')
-    return model
-
-
-def dla60(pretrained=None, **kwargs):  # DLA-60
-    Bottleneck.expansion = 2
-    model = DLA([1, 1, 1, 2, 3, 1],
-                [16, 32, 128, 256, 512, 1024],
-                block=Bottleneck, **kwargs)
-    if pretrained is not None:
-        model.load_pretrained_model(
-            data='imagenet', name='dla60', hash='24839fc4')
-    return model
-
-
-def dla60x(pretrained=None, **kwargs):  # DLA-X-60
-    BottleneckX.expansion = 2
-    model = DLA([1, 1, 1, 2, 3, 1],
-                [16, 32, 128, 256, 512, 1024],
-                block=BottleneckX, **kwargs)
-    if pretrained is not None:
-        model.load_pretrained_model(
-            data='imagenet', name='dla60x', hash='d15cacda')
-    return model
-
-
-def dla102x(pretrained=None, **kwargs):  # DLA-X-102
-    BottleneckX.expansion = 2
-    model = DLA([1, 1, 1, 3, 4, 1], [16, 32, 128, 256, 512, 1024],
-                block=BottleneckX, residual_root=True, **kwargs)
-    if pretrained is not None:
-        model.load_pretrained_model(
-            data='imagenet', name='dla102x', hash='ad62be81')
-    return model
-
-
-def dla102x2(pretrained=None, **kwargs):  # DLA-X-102 64
-    BottleneckX.cardinality = 64
-    model = DLA([1, 1, 1, 3, 4, 1], [16, 32, 128, 256, 512, 1024],
-                block=BottleneckX, residual_root=True, **kwargs)
-    if pretrained is not None:
-        model.load_pretrained_model(
-            data='imagenet', name='dla102x2', hash='262837b6')
-    return model
-
-
-def dla169(pretrained=None, **kwargs):  # DLA-169
-    Bottleneck.expansion = 2
-    model = DLA([1, 1, 2, 3, 5, 1], [16, 32, 128, 256, 512, 1024],
-                block=Bottleneck, residual_root=True, **kwargs)
-    if pretrained is not None:
-        model.load_pretrained_model(
-            data='imagenet', name='dla169', hash='0914e092')
-    return model
-
 
 class Identity(nn.Module):
 
