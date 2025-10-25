@@ -275,7 +275,7 @@ def generate_pc_hm(output, pc_dep, calib, opt):
 def pc_dep_to_hm_torch(pc_hm, pc_dep, dep, bbox, dist_thresh, opt):
     if isinstance(dep, list) and len(dep) > 0:
       dep = dep[0]
-    ct = torch.tensor([(bbox[0] + bbox[2]) / 2, (bbox[1] + bbox[3]) / 2], dtype=np.float32)
+    ct = torch.tensor([(bbox[0] + bbox[2]) / 2, (bbox[1] + bbox[3]) / 2], dtype=torch.float32)
     
     # DEPRECATED: PyTorch does not support non-integer indexing (torch dtypes not allowed)
     # bbox_int = torch.tensor([torch.floor(bbox[0]), 
