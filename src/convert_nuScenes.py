@@ -63,6 +63,9 @@ RADARS_FOR_CAMERA = {
   'CAM_BACK_LEFT':   ["RADAR_BACK_LEFT", "RADAR_FRONT_LEFT"],
   'CAM_BACK_RIGHT':  ["RADAR_BACK_RIGHT", "RADAR_FRONT_RIGHT"],
   'CAM_BACK':        ["RADAR_BACK_RIGHT","RADAR_BACK_LEFT"]}
+
+# NUM_SWEEPS must match --radar_sweeps option used
+# default is 6
 NUM_SWEEPS = 6
 
 suffix1 = '_{}sweeps'.format(NUM_SWEEPS) if NUM_SWEEPS > 1 else ''
