@@ -203,6 +203,7 @@ def get_dist_thresh(calib, ct, dim, alpha):
 
 
 def generate_pc_hm(output, pc_dep, calib, opt):
+      # generates pointcloud heatmap
       K = opt.K
       # K = 100
       heat = output['hm']
