@@ -96,6 +96,7 @@ class BaseModel(nn.Module):
           if head not in self.secondary_heads:
             z[head] = self.__getattr__(head)(feats[s])
 
+        # if pointcloud is set then we train the second stage heads
         if self.opt.pointcloud:
           ## get pointcloud heatmap
           if not self.training:

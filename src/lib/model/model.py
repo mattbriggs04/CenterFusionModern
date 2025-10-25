@@ -85,6 +85,7 @@ def load_model(model, model_path, opt, optimizer=None):
   model.load_state_dict(state_dict, strict=False)
 
   # freeze backbone network
+  # use this for fine tuning network heads
   if opt.freeze_backbone:
     for (name, module) in model.named_children():
       if name in opt.layers_to_freeze:
@@ -117,6 +118,9 @@ def save_model(path, epoch, model, optimizer=None):
     state_dict = model.state_dict()
   data = {'epoch': epoch,
           'state_dict': state_dict}
+  
+  # if planning to resume training of model in later session
+  # we should save optimizer state
   if not (optimizer is None):
     data['optimizer'] = optimizer.state_dict()
   torch.save(data, path)
