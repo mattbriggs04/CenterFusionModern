@@ -133,5 +133,7 @@ def main(opt):
   logger.close()
 
 if __name__ == '__main__':
+  print("Loading options...")
   opt = opts().parse()
+  print("Options loaded...")
   main(opt)
