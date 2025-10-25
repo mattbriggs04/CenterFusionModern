@@ -225,7 +225,7 @@ class Trainer(object):
  
       del output, loss, loss_stats
     
-    # bar.finish()
+    bar.finish()
     ret = {k: v.avg for k, v in avg_loss_stats.items()}
     # ret['time'] = bar.elapsed_td.total_seconds() / 60
     return ret, results
