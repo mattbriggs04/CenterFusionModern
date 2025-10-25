@@ -1,6 +1,5 @@
 # import _init_paths
 import os
-
 import torch
 import torch.utils.data
 from lib.opts import opts
@@ -29,21 +28,22 @@ def main(opt):
   torch.backends.cudnn.benchmark = not opt.not_cuda_benchmark and not opt.eval
   Dataset = get_dataset(opt.dataset)
   opt = opts().update_dataset_info_and_set_heads(opt, Dataset)
-  print(opt)
+  print("Options =", opt)
   if not opt.not_set_cuda_env:
     os.environ['CUDA_VISIBLE_DEVICES'] = opt.gpus_str
   opt.device = torch.device('cuda' if opt.gpus[0] >= 0 else 'cpu')
   logger = Logger(opt)
 
-  print('Creating model...')
-  model = create_model(opt.arch, opt.heads, opt.head_conv, opt=opt)
-  optimizer = get_optimizer(opt, model)
-  start_epoch = 0
+  # create or load in model
   lr = opt.lr
-
-  if opt.load_model != '':
-    model, optimizer, start_epoch = load_model(
-      model, opt.load_model, opt, optimizer)
+  if opt.load_model == '':
+    print('Creating model...')
+    model = create_model(opt.arch, opt.heads, opt.head_conv, opt=opt)
+    optimizer = get_optimizer(opt, model)
+    start_epoch = 0
+  else:
+    print(f'Loading model {opt.load_model}...')
+    model, optimizer, start_epoch = load_model(model, opt.load_model, opt, optimizer)
 
   trainer = Trainer(opt, model, optimizer)
   trainer.set_device(opt.gpus, opt.chunk_sizes, opt.device)
@@ -72,10 +72,13 @@ def main(opt):
     mark = epoch if opt.save_all else 'last'
 
     # log learning rate
-    for param_group in optimizer.param_groups:
-      lr = param_group['lr']
-      logger.scalar_summary('LR', lr, epoch)
-      break
+    # DEPRECATED
+    # for param_group in optimizer.param_groups:
+    #   lr = param_group['lr']
+    #   logger.scalar_summary('LR', lr, epoch)
+    #   break
+    lr = optimizer.param_groups[0]['lr']
+    logger.scalar_summary('LR', lr, epoch)
     
     # train one epoch
     log_dict_train, _ = trainer.train(epoch, train_loader)
@@ -124,6 +127,7 @@ def main(opt):
                  epoch, model, optimizer)
     
     # update learning rate
+    # TODO: may want to add an option to choose a separate way of stepping the learning rate (e.g. CosineAnnealing)
     if epoch in opt.lr_step:
       lr = opt.lr * (0.1 ** (opt.lr_step.index(epoch) + 1))
       print('Drop LR to', lr)
@@ -133,7 +137,5 @@ def main(opt):
   logger.close()
 
 if __name__ == '__main__':
-  print("Loading options...")
   opt = opts().parse()
-  print("Options loaded...")
   main(opt)
