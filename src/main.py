@@ -43,6 +43,8 @@ def main(opt):
     start_epoch = 0
   else:
     print(f'Loading model {opt.load_model}...')
+    model = create_model(opt.arch, opt.heads, opt.head_conv, opt=opt)
+    optimizer = get_optimizer(opt, model)
     model, optimizer, start_epoch = load_model(model, opt.load_model, opt, optimizer)
 
   trainer = Trainer(opt, model, optimizer)
