@@ -33,7 +33,7 @@ class NuScenesVisualizer():
         self.debugger = self.detector.debugger
 
 
-def run(self, img_idx: int):
+    def run(self, img_idx: int):
         """
         Runs the full inference and drawing pipeline on a single image.
         """
@@ -44,14 +44,11 @@ def run(self, img_idx: int):
         sample = self.dataset[img_idx]
 
         # 2. Get the original image for drawing
-        # --- FIX: Manually construct the path like test.py ---
-        # Get the image ID for this index
+        # this is how test.py constructs the path
+        # get the image ID for this index
         img_id = self.dataset.images[img_idx]
-        # Load the image info from the COCO annotations
         img_info = self.dataset.coco.loadImgs(ids=[img_id])[0]
-        # Construct the full path
         img_path = os.path.join(self.dataset.img_dir, img_info['file_name'])
-        # --- END FIX ---
 
         img = cv2.imread(img_path)
         if img is None:
