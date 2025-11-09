@@ -11,7 +11,6 @@ def fill_fc_weights(layers):
             if m.bias is not None:
                 nn.init.constant_(m.bias, 0)
 
-
 class BaseModel(nn.Module):
     def __init__(self, heads, head_convs, num_stacks, last_channel, opt=None):
         super(BaseModel, self).__init__()
