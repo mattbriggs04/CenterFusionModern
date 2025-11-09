@@ -11,10 +11,7 @@ from lib.dataset.datasets.nuscenes import nuScenes
 class NuScenesVisualizer():
     """
     A class to load a model and visualize its output on a
-    single nuScenes sample.
-    
-    This class re-uses the Detector's internal methods for
-    processing and drawing.
+    single nuScenes sample by drawing bounding boxes.
     """
 
     def __init__(self, opt):
@@ -22,15 +19,13 @@ class NuScenesVisualizer():
         self.opt = opt
         self.opt.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
         
-        # Load the dataset
-        print(f"Loading dataset split: {self.opt.val_split}")
+        # load the dataset
         Dataset = dataset_factory[self.opt.dataset]
+        self.opt = opts().update_dataset_info_and_set_heads(self.opt, Dataset)
+        print(f"Loading dataset split: {self.opt.val_split}")
         self.dataset = Dataset(self.opt, self.opt.val_split)
         
-        # Initialize the Detector. This will:
-        # 1. Create the model
-        # 2. Load the weights from opt.load_model
-        # 3. Create its own internal Debugger
+        # Initialize the Detector to create model, load weights, and create debugger
         print("Loading model and detector...")
         self.detector = Detector(self.opt)
         
@@ -95,42 +90,37 @@ class NuScenesVisualizer():
 
 if __name__ == "__main__":
     
-    # Use argparse to add our new, custom arguments
+    # use argparse to add our new, custom arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('--sample_id', type=int, default=10,
                         help='Index of the sample to visualize')
     parser.add_argument('--save_path', type=str, default='',
                         help='Path to save the output image (default: sample_XX.jpg)')
     
-    # Use the repo's opts.py to parse all known arguments
-    # AND our custom ones.
-    # The 'parse' method takes an 'args' list, not a parser object
-    # We must manually separate our args from the repo's args.
-    
-    # This is a bit of a hack to get args from both
+    # this is a bit of a hack to get args from both
     known_args, unknown_args = parser.parse_known_args()
     
-    # Pass the remaining (unknown) args to the main opts parser
+    # pass the remaining (unknown) args to the main opts parser
     opt = opts().parse(unknown_args)
     
-    # Add our custom args to the opt namespace
+    # add our custom args to the opt namespace
     opt.sample_id = known_args.sample_id
     opt.save_path = known_args.save_path
     
-    # Create the visualizer
+    # create the visualizer
     vis = NuScenesVisualizer(opt)
     
-    # Run visualization
+    # run visualization
     result_img = vis.run(opt.sample_id)
     
-    # Determine save path
+    # determine save path
     save_path = opt.save_path
     if save_path == '':
         save_path = f'./sample_{opt.sample_id:04d}_vis.jpg'
 
-    # Save the final image
+    # save the final image
     cv2.imwrite(save_path, result_img)
     
-    # Get absolute path for a clear message
+    # get absolute path for a clear message
     final_path = os.path.abspath(save_path)
     print(f"\nSuccessfully saved visualization to:\n{final_path}")
