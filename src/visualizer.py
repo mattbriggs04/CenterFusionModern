@@ -33,7 +33,7 @@ class NuScenesVisualizer():
         self.debugger = self.detector.debugger
 
 
-    def run(self, img_idx: int):
+def run(self, img_idx: int):
         """
         Runs the full inference and drawing pipeline on a single image.
         """
@@ -44,7 +44,15 @@ class NuScenesVisualizer():
         sample = self.dataset[img_idx]
 
         # 2. Get the original image for drawing
-        img_path = self.dataset.get_image_path(img_idx)
+        # --- FIX: Manually construct the path like test.py ---
+        # Get the image ID for this index
+        img_id = self.dataset.images[img_idx]
+        # Load the image info from the COCO annotations
+        img_info = self.dataset.coco.loadImgs(ids=[img_id])[0]
+        # Construct the full path
+        img_path = os.path.join(self.dataset.img_dir, img_info['file_name'])
+        # --- END FIX ---
+
         img = cv2.imread(img_path)
         if img is None:
             print(f"Error: Could not load image at {img_path}")
@@ -63,17 +71,17 @@ class NuScenesVisualizer():
         with torch.no_grad():
             output, dets, forward_time = self.detector.process(
                 img_tensor, pc_dep=pc_dep_tensor, meta=meta
-            ) #
+            )
         
         # 5. Run Post-processing
         # This converts detections to the original image scale
         print("Post-processing detections...")
-        results = self.detector.post_process(dets, meta) #
+        results = self.detector.post_process(dets, meta)
 
         # 6. Run Drawing
         # This uses the detector's *internal* debugger to draw
         print("Drawing bounding boxes...")
-        self.detector.show_results(self.debugger, img, results) #
+        self.detector.show_results(self.debugger, img, results)
         
         # 7. Get the final image from the debugger's canvas
         # show_results draws on 'ddd_pred' or 'generic'
@@ -84,9 +92,6 @@ class NuScenesVisualizer():
         
         print("Inference complete.")
         return drawn_img
-
-    def get_dataset_size(self):
-        return len(self.dataset)
 
 if __name__ == "__main__":
     
