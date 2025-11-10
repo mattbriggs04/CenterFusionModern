@@ -35,36 +35,62 @@ class NuScenesVisualizer():
 
     def run(self, img_idx: int):
         """
-        Runs the full inference and drawing pipeline on a single image
-        by correctly using the detector.run() method.
+        Runs the full inference and drawing pipeline on a single image.
         """
         print(f"--- Processing Sample {img_idx} ---")
         
-        # 1. Get image info and path, just like test.py
+        # 1. Get the data sample from the dataset loader
+        # 'sample' is a dict with ALL data as numpy arrays
+        sample = self.dataset[img_idx]
+
+        # 2. Get the original image for drawing
         img_id = self.dataset.images[img_idx]
         img_info = self.dataset.coco.loadImgs(ids=[img_id])[0]
         img_path = os.path.join(self.dataset.img_dir, img_info['file_name'])
+        
+        img = cv2.imread(img_path)
+        if img is None:
+            print(f"Error: Could not load image at {img_path}")
+            return
 
-        # 2. Get metadata (calib)
-        input_meta = {}
-        if 'calib' in img_info:
-            input_meta['calib'] = img_info['calib']
+        # 3. Add a batch dimension and send to device
+        # --- THIS IS THE FIX ---
+        # Convert NumPy arrays to PyTorch tensors before calling .unsqueeze()
+        img_tensor = torch.from_numpy(sample['image']).unsqueeze(0).to(self.opt.device)
+        pc_dep_tensor = torch.from_numpy(sample['pc_dep']).unsqueeze(0).to(self.opt.device)
         
-        # 3. Call detector.run()
-        # This single function will do all the steps you were
-        # trying to do manually (pre-process, process, post-process,
-        # and draw).
-        print("Running full detection pipeline...")
-        # We pass the path and meta, not tensors.
-        ret = self.detector.run(img_path, input_meta)    
+        # 4. Create the 'meta' dict needed by the detector
+        # All this info is in the 'sample' dict at the top level.
+        meta = {
+            'calib': sample['calib'],
+            'c': sample['c'],
+            's': sample['s'],
+            'out_height': self.opt.output_h,
+            'out_width': self.opt.output_w,
+            'height': img.shape[0],
+            'width': img.shape[1]
+        }
+
+        # 5. Run Inference (process)
+        print("Running model inference...")
+        with torch.no_grad():
+            output, dets, forward_time = self.detector.process(
+                img_tensor, pc_dep=pc_dep_tensor, meta=meta
+            )
         
-        # 4. Get the final image from the detector's internal debugger
-        # The 'show_results' method (called by run) draws
-        # on 'ddd_pred' or 'generic'.
-        if 'ddd_pred' in self.detector.debugger.imgs:
-            drawn_img = self.detector.debugger.imgs['ddd_pred']
+        # 6. Run Post-processing
+        print("Post-processing detections...")
+        results = self.detector.post_process(dets, meta)
+
+        # 7. Run Drawing
+        print("Drawing bounding boxes...")
+        self.detector.show_results(self.debugger, img, results)
+        
+        # 8. Get the final image from the debugger's canvas
+        if 'ddd_pred' in self.debugger.imgs:
+            drawn_img = self.debugger.imgs['ddd_pred']
         else:
-            drawn_img = self.detector.debugger.imgs['generic']
+            drawn_img = self.debugger.imgs['generic']
         
         print("Inference complete.")
         return drawn_img
