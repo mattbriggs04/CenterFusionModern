@@ -1,9 +1,11 @@
 # Copyright (c) Xingyi Zhou. All Rights Reserved
+# Modified by Matt Briggs
 '''
 nuScenes pre-processing script.
 This file convert the nuScenes annotation into COCO format.
 '''
 import os
+import sys
 import json
 import numpy as np
 import cv2
@@ -64,9 +66,12 @@ RADARS_FOR_CAMERA = {
   'CAM_BACK_RIGHT':  ["RADAR_BACK_RIGHT", "RADAR_FRONT_RIGHT"],
   'CAM_BACK':        ["RADAR_BACK_RIGHT","RADAR_BACK_LEFT"]}
 
-# NUM_SWEEPS must match --radar_sweeps option used
 # default is 6
 NUM_SWEEPS = 6
+if len(sys.argv) > 2 and sys.argv[1] in ("--radar_sweeps", "-s"):
+  NUM_SWEEPS = int(sys.argv[2])
+else:
+  print(f"Either no command line arguments given or they're invalid.")
 
 suffix1 = '_{}sweeps'.format(NUM_SWEEPS) if NUM_SWEEPS > 1 else ''
 OUT_PATH = OUT_PATH + suffix1 + '/'
@@ -99,6 +104,8 @@ ATTRIBUTE_TO_ID = {
   'vehicle.stopped': 8}
 
 def main():
+  print(f"Using NUM_SWEEPS = {NUM_SWEEPS}")
+  
   if not os.path.exists(OUT_PATH):
     os.mkdir(OUT_PATH)
   for split in SPLITS:
