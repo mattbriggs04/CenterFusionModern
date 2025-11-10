@@ -36,57 +36,55 @@ class NuScenesVisualizer():
     def run(self, img_idx: int):
         """
         Runs the full inference and drawing pipeline on a single image.
+        This method correctly replicates the logic from test.py's PrefetchDataset.
         """
         print(f"--- Processing Sample {img_idx} ---")
         
-        # 1. Get the data sample from the dataset loader
-        # 'sample' is a dict with ALL data as numpy arrays
-        sample = self.dataset[img_idx]
-
-        # 2. Get the original image for drawing
+        # 1. Get image info, path, and raw image
         img_id = self.dataset.images[img_idx]
         img_info = self.dataset.coco.loadImgs(ids=[img_id])[0]
         img_path = os.path.join(self.dataset.img_dir, img_info['file_name'])
-        
-        img = cv2.imread(img_path)
-        if img is None:
+        image = cv2.imread(img_path)
+        if image is None:
             print(f"Error: Could not load image at {img_path}")
             return
 
-        # 3. Add a batch dimension and send to device
-        # --- THIS IS THE FIX ---
-        # Convert NumPy arrays to PyTorch tensors before calling .unsqueeze()
-        img_tensor = torch.from_numpy(sample['image']).unsqueeze(0).to(self.opt.device)
-        pc_dep_tensor = torch.from_numpy(sample['pc_dep']).unsqueeze(0).to(self.opt.device)
+        # 2. Get calibration
+        input_meta = {}
+        if 'calib' in img_info:
+            input_meta['calib'] = img_info['calib']
         
-        # 4. Create the 'meta' dict needed by the detector
-        # All this info is in the 'sample' dict at the top level.
-        meta = {
-            'calib': sample['calib'],
-            'c': sample['c'],
-            's': sample['s'],
-            'out_height': self.opt.output_h,
-            'out_width': self.opt.output_w,
-            'height': img.shape[0],
-            'width': img.shape[1]
-        }
+        # 3. Call pre_process to generate 'meta' (with 'c', 's', etc.)
+        # This is the step that was missing.
+        scale = self.opt.test_scales[0] # We only use one scale
+        images_tensor, meta = self.detector.pre_process(image, scale, input_meta)
 
-        # 5. Run Inference (process)
+        # 4. Load Point Cloud
+        # This function *requires* the 'meta' dict from pre_process
+        pc_2d, pc_N, pc_dep, pc_3d = self.dataset._load_pc_data(
+            image, img_info, meta['trans_input'], meta['trans_output']
+        )
+        
+        # 5. Convert data to Tensors on the correct device
+        img_tensor = images_tensor.to(self.opt.device)
+        pc_dep_tensor = torch.from_numpy(pc_dep).unsqueeze(0).to(self.opt.device)
+        
+        # 6. Run Inference (process)
         print("Running model inference...")
         with torch.no_grad():
             output, dets, forward_time = self.detector.process(
                 img_tensor, pc_dep=pc_dep_tensor, meta=meta
             )
         
-        # 6. Run Post-processing
+        # 7. Run Post-processing
         print("Post-processing detections...")
         results = self.detector.post_process(dets, meta)
 
-        # 7. Run Drawing
+        # 8. Run Drawing
         print("Drawing bounding boxes...")
-        self.detector.show_results(self.debugger, img, results)
+        self.detector.show_results(self.debugger, image, results)
         
-        # 8. Get the final image from the debugger's canvas
+        # 9. Get the final image from the debugger's canvas
         if 'ddd_pred' in self.debugger.imgs:
             drawn_img = self.debugger.imgs['ddd_pred']
         else:
