@@ -167,7 +167,7 @@ if __name__ == "__main__":
     # pass the remaining (unknown) args to the main opts parser
     opt = opts().parse(unknown_args)
     
-    # add our custom args to the opt namespace
+    # add custom args to the opt namespace
     opt.sample_id = known_args.sample_id
     opt.save_path = known_args.save_path
     
