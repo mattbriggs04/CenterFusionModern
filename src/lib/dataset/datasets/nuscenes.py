@@ -90,7 +90,7 @@ class nuScenes(GenericDataset):
         # newest format
         for j in range(len(all_bboxes[image_id])):
           item = all_bboxes[image_id][j]   
-          category_id = citem['class']
+          category_id = item['class']
           bbox = item['bbox']
           bbox[2] -= bbox[0]
           bbox[3] -= bbox[1]
