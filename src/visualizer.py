@@ -130,7 +130,7 @@ class NuScenesVisualizer():
         # 6. Run Inference (process)
         print("Running model inference...")
         with torch.no_grad():
-            output, dets, forward_time = self.detector.process(
+            output, dets = self.detector.process(
                 img_tensor, pc_dep=pc_dep_tensor, meta=meta
             )
         
