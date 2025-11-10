@@ -56,8 +56,8 @@ class NuScenesVisualizer():
             return
 
         # 3. Add a batch dimension and send to device
-        img_tensor = sample['image'].unsqueeze(0).to(self.opt.device)
-        pc_dep_tensor = sample['pc_dep'].unsqueeze(0).to(self.opt.device)
+        img_tensor = torch.from_numpy(sample['image']).unsqueeze(0).to(self.opt.device)
+        pc_dep_tensor = torch.from_numpy(sample['pc_dep']).unsqueeze(0).to(self.opt.device)
         
         # 'meta' is used by process and post_process
         meta = sample['meta'] 
