@@ -192,7 +192,10 @@ if __name__ == "__main__":
     save_path = opt.save_path
     if save_path == '':
         save_path = f'./sample_{opt.sample_id:04d}_vis.jpg'
-
+    elif not os.path.exists(save_path):
+        print(f'Path {save_path} does not exist, saving to src/ directory')
+        save_path = f'./sample_{opt.sample_id:04d}_vis.jpg'
+        
     # save the final image
     cv2.imwrite(save_path, result_img)
     
