@@ -6,13 +6,8 @@ import argparse
 from lib.opts import opts
 from lib.detector import Detector
 from lib.dataset.dataset_factory import dataset_factory
-from lib.dataset.datasets.nuscenes import nuScenes 
 
 class NuScenesVisualizer():
-    """
-    A class to load a model and visualize its output on a
-    single nuScenes sample by drawing bounding boxes.
-    """
 
     def __init__(self, opt):
         print("Initializing visualizer...")
@@ -174,7 +169,7 @@ if __name__ == "__main__":
     # create the visualizer
     vis = NuScenesVisualizer(opt)
     
-    # run visualization
+    # run visualization (headless for colab)
     result_img = vis.run_headless(opt.sample_id)
     
     # determine save path
