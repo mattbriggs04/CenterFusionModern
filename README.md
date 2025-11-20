@@ -27,5 +27,14 @@ Install dependencies
 cd CenterFusionModern
 pip install -r requirements.txt
 ```
+
+## Training a model
+The jupyter notebook file located in `experiments/` is intended for use on Google Colab using a GPU. Using an A100 if available is suggested. This notebook contains how to train, test, and run 3D box decoding.
+
 ## Pretrained Models
-The original CenterFusion pretrained models are rotten (404 errors). Coming soon: my own pretrained models using Google Colab cloud computing.
+The original CenterFusion pretrained models are rotten (404 errors).
+
+## Modernization Simplifications
+The main major simplification this approach takes is the reduction of using a Deformable Convolutional Network (DCN) as the fully convolutional backbone. This method is still supported, and if desired a DCN implementation can be imported (import to `src/lib/model/networks`) and used.
+
+> **dla.py** in `src/lib/model/networks/` will attempt to import `from .DCNv2.dcn_v2 import DCN`. If this fails, it falls back to a purely convolutional network and assumes the --dla_node argument is set to 'conv'.
