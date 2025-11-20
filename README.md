@@ -35,6 +35,6 @@ The jupyter notebook file located in `experiments/` is intended for use on Googl
 The original CenterFusion pretrained models are rotten (404 errors). My own pretrained models may be coming soon.
 
 ## Modernization Simplifications
-The main major simplification this approach takes is the reduction of using a Deformable Convolutional Network (DCN) as the fully convolutional backbone. This method is still supported, and if desired a DCN implementation can be imported (import to `src/lib/model/networks`) and used.
+The main major simplification CenterFusionModern makes over the original repository is the reduction of using a Deformable Convolutional Network (DCN) as the fully convolutional backbone. This method is still supported, and if desired a DCN implementation can be cloned (clone to `src/lib/model/networks`) and used.
 
 > **dla.py** in `src/lib/model/networks/` will attempt to import `from .DCNv2.dcn_v2 import DCN`. If this fails, it falls back to a purely convolutional network and assumes the --dla_node argument is set to 'conv'.
