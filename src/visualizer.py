@@ -2,10 +2,12 @@ import torch
 import cv2
 import os
 import argparse
+import numpy as np
 
 from lib.opts import opts
 from lib.detector import Detector
 from lib.dataset.dataset_factory import dataset_factory
+from lib.utils.pointcloud import map_pointcloud_to_image
 
 class NuScenesVisualizer():
 
@@ -147,6 +149,53 @@ class NuScenesVisualizer():
         print("Inference complete.")
         return drawn_img
 
+    def run_radar_viz(self, img_idx: int):
+        """
+        Visualizes RAW radar point clouds projected onto the image.
+        Does NOT run model inference.
+        """
+        print(f"--- Visualizing Radar for Sample {img_idx} ---")
+        
+        # get image info
+        img_id = self.dataset.images[img_idx]
+        img_info = self.dataset.coco.loadImgs(ids=[img_id])[0]
+        img_path = os.path.join(self.dataset.img_dir, img_info['file_name'])
+        image = cv2.imread(img_path)
+        
+        if image is None:
+            print(f"Error: Could not load image at {img_path}")
+            return
+
+        # Extract Raw Radar PC and Calibration
+        # 'radar_pc' is stored as a list in json, convert to numpy
+        if 'radar_pc' not in img_info:
+            print("Error: No 'radar_pc' found in annotation. Ensure convert_nuScenes was run with --pointcloud.")
+            return
+            
+        pc = np.array(img_info['radar_pc']) # Shape: (18, N)
+        calib = np.array(img_info['calib'])
+        cam_intrinsic = calib[:, :3] # 3x3 matrix
+
+        # Map points to image plane
+        # map_pointcloud_to_image expects (3, N) or (18, N) and handles the rest
+        points, mask = map_pointcloud_to_image(pc, cam_intrinsic, img_shape=(image.shape[1], image.shape[0]))
+        
+        # Draw points
+        # Points is (3, N) where row 0=u, 1=v, 2=depth
+        print(f"Projecting {points.shape[1]} radar points onto image...")
+        
+        for i, p in enumerate(points.T):
+            depth = p[2]
+            # Color logic: Close = Red, Far = Blue
+            # Normalize depth for color (0 to 60m approx)
+            val = max(0, min(1, depth / 60.0)) 
+            # BGR color
+            color = (int(255 * val), int(255 * (1 - val)), 0) 
+            
+            # Draw circle
+            cv2.circle(image, (int(p[0]), int(p[1])), 5, color, -1)
+
+        return image
 if __name__ == "__main__":
     
     # use argparse to add our new, custom arguments
