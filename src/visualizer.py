@@ -196,14 +196,16 @@ class NuScenesVisualizer():
             cv2.circle(image, (int(p[0]), int(p[1])), 5, color, -1)
 
         return image
+
 if __name__ == "__main__":
-    
     # use argparse to add our new, custom arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('--sample_id', type=int, default=10,
                         help='Index of the sample to visualize')
     parser.add_argument('--save_path', type=str, default='',
                         help='Path to save the output image (default: sample_XX.jpg)')
+    parser.add_argument('--viz_mode', type=str, default='model', choices=['model', 'radar'],
+                        help='Choose "model" to see detections, or "radar" to see raw point cloud input')
     
     # this is a bit of a hack to get args from both
     known_args, unknown_args = parser.parse_known_args()
@@ -214,20 +216,26 @@ if __name__ == "__main__":
     # add custom args to the opt namespace
     opt.sample_id = known_args.sample_id
     opt.save_path = known_args.save_path
+    opt.viz_mode = known_args.viz_mode
     
     # create the visualizer
     vis = NuScenesVisualizer(opt)
     
-    # run visualization (headless for colab)
-    result_img = vis.run_headless(opt.sample_id)
+    # Select mode
+    if opt.viz_mode == 'radar':
+        result_img = vis.run_radar_viz(opt.sample_id)
+        default_name_suffix = "_radar.jpg"
+    else:
+        result_img = vis.run_headless(opt.sample_id)
+        default_name_suffix = "_model.jpg"
     
     # determine save path
     save_path = opt.save_path
     if save_path == '':
-        save_path = f'./sample_{opt.sample_id:04d}_vis.jpg'
-    elif not os.path.exists(save_path):
-        print(f'Path {save_path} does not exist, saving to src/ directory')
-        save_path = f'./sample_{opt.sample_id:04d}_vis.jpg'
+        save_path = f'./sample_{opt.sample_id:04d}{default_name_suffix}'
+    elif not os.path.exists(os.path.dirname(save_path)) and os.path.dirname(save_path) != '':
+        print(f'Directory for {save_path} does not exist, saving to current directory')
+        save_path = f'./sample_{opt.sample_id:04d}{default_name_suffix}'
         
     # save the final image
     cv2.imwrite(save_path, result_img)
